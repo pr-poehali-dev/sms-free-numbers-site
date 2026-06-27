@@ -97,7 +97,6 @@ const NAV = [
   { id: 'countries', label: 'Страны' },
   { id: 'numbers', label: 'Номера' },
   { id: 'history', label: 'История' },
-  { id: 'api', label: 'API' },
   { id: 'contacts', label: 'Контакты' },
 ];
 
@@ -165,9 +164,7 @@ const Index = () => {
           <Button size="lg" onClick={() => scrollTo('countries')} className="bg-gradient-to-r from-primary to-accent text-white border-0 hover:opacity-90 h-12 px-7 text-base glow">
             <Icon name="Globe" size={18} className="mr-2" /> Выбрать страну
           </Button>
-          <Button size="lg" variant="outline" onClick={() => scrollTo('api')} className="h-12 px-7 text-base bg-transparent">
-            <Icon name="Code2" size={18} className="mr-2" /> API для разработчиков
-          </Button>
+
         </div>
 
         <div className="grid grid-cols-3 gap-4 max-w-xl mx-auto mt-16">
@@ -243,45 +240,6 @@ const Index = () => {
         <div className="glass rounded-2xl p-10 text-center">
           <Icon name="History" size={40} className="mx-auto mb-4 text-muted-foreground" />
           <p className="text-muted-foreground">Пока нет покупок. Купи первый номер — и он появится здесь.</p>
-        </div>
-      </section>
-
-      {/* API */}
-      <section id="api" className="container py-20">
-        <div className="glass rounded-3xl p-8 md:p-12 grid lg:grid-cols-2 gap-10 items-center">
-          <div>
-            <div className="inline-flex items-center gap-2 text-accent text-sm font-medium mb-4">
-              <Icon name="Code2" size={16} /> Для разработчиков
-            </div>
-            <h2 className="font-display text-4xl font-bold mb-4">API для интеграции номеров</h2>
-            <p className="text-muted-foreground mb-6">Подключи приём СМС к своему приложению за минуты. Простой REST API, ключ доступа и подробная документация.</p>
-            <ul className="space-y-3 mb-8">
-              {['Получение номера одним запросом', 'Вебхуки на входящие коды', 'Лимиты и статистика в реальном времени'].map((t) => (
-                <li key={t} className="flex items-center gap-3">
-                  <span className="w-5 h-5 rounded-full bg-accent/20 grid place-items-center"><Icon name="Check" size={12} className="text-accent" /></span>
-                  <span className="text-sm">{t}</span>
-                </li>
-              ))}
-            </ul>
-            <Button className="bg-gradient-to-r from-primary to-accent text-white border-0 hover:opacity-90">
-              Получить API-ключ
-            </Button>
-          </div>
-          <div className="rounded-2xl bg-[#0c0c16] border border-white/10 p-5 font-mono text-sm overflow-x-auto">
-            <div className="flex gap-1.5 mb-4">
-              <span className="w-3 h-3 rounded-full bg-red-400/70" />
-              <span className="w-3 h-3 rounded-full bg-yellow-400/70" />
-              <span className="w-3 h-3 rounded-full bg-green-400/70" />
-            </div>
-            <pre className="text-muted-foreground leading-relaxed">
-<span className="text-accent">POST</span> /api/v1/numbers{'\n'}
-<span className="text-primary">Authorization:</span> Bearer YOUR_KEY{'\n\n'}
-{'{'}{'\n'}
-{'  '}<span className="text-cyan-400">"country"</span>: <span className="text-green-400">"ru"</span>,{'\n'}
-{'  '}<span className="text-cyan-400">"service"</span>: <span className="text-green-400">"telegram"</span>{'\n'}
-{'}'}
-            </pre>
-          </div>
         </div>
       </section>
 
