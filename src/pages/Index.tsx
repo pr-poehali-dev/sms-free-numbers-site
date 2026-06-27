@@ -4,27 +4,33 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
-type Country = { code: string; name: string; flag: string; dial: string };
+type Country = { code: string; name: string; flag: string; dial: string; format: string };
 
+// Формат: # — случайная цифра, % — случайная цифра 1-9 (первая значимая)
 const COUNTRIES: Country[] = [
-  { code: 'ru', name: 'Россия', flag: '🇷🇺', dial: '+7' },
-  { code: 'us', name: 'США', flag: '🇺🇸', dial: '+1' },
-  { code: 'gb', name: 'Великобритания', flag: '🇬🇧', dial: '+44' },
-  { code: 'de', name: 'Германия', flag: '🇩🇪', dial: '+49' },
-  { code: 'fr', name: 'Франция', flag: '🇫🇷', dial: '+33' },
-  { code: 'ua', name: 'Украина', flag: '🇺🇦', dial: '+380' },
-  { code: 'kz', name: 'Казахстан', flag: '🇰🇿', dial: '+7' },
-  { code: 'pl', name: 'Польша', flag: '🇵🇱', dial: '+48' },
-  { code: 'es', name: 'Испания', flag: '🇪🇸', dial: '+34' },
-  { code: 'it', name: 'Италия', flag: '🇮🇹', dial: '+39' },
-  { code: 'tr', name: 'Турция', flag: '🇹🇷', dial: '+90' },
-  { code: 'in', name: 'Индия', flag: '🇮🇳', dial: '+91' },
+  { code: 'ru', name: 'Россия', flag: '🇷🇺', dial: '+7', format: '(9##) ###-##-##' },
+  { code: 'us', name: 'США', flag: '🇺🇸', dial: '+1', format: '(%##) ###-####' },
+  { code: 'gb', name: 'Великобритания', flag: '🇬🇧', dial: '+44', format: '7### ######' },
+  { code: 'de', name: 'Германия', flag: '🇩🇪', dial: '+49', format: '15# ########' },
+  { code: 'fr', name: 'Франция', flag: '🇫🇷', dial: '+33', format: '6 ## ## ## ##' },
+  { code: 'ua', name: 'Украина', flag: '🇺🇦', dial: '+380', format: '## ### ## ##' },
+  { code: 'kz', name: 'Казахстан', flag: '🇰🇿', dial: '+7', format: '(7##) ###-##-##' },
+  { code: 'pl', name: 'Польша', flag: '🇵🇱', dial: '+48', format: '### ### ###' },
+  { code: 'es', name: 'Испания', flag: '🇪🇸', dial: '+34', format: '6## ## ## ##' },
+  { code: 'it', name: 'Италия', flag: '🇮🇹', dial: '+39', format: '3## ### ####' },
+  { code: 'tr', name: 'Турция', flag: '🇹🇷', dial: '+90', format: '(5##) ### ## ##' },
+  { code: 'in', name: 'Индия', flag: '🇮🇳', dial: '+91', format: '%#### #####' },
 ];
 
 const SITES = ['Telegram', 'WhatsApp', 'Google', 'Instagram', 'VK', 'TikTok', 'Discord', 'Avito', 'Steam', 'Apple ID', 'Microsoft', 'Tinder', 'Uber', 'Amazon', 'PayPal'];
 
 const rnd = (n: number) => Math.floor(Math.random() * n);
-const genNumber = (c: Country) => `${c.dial} ${rnd(900) + 100} ${rnd(900) + 100}-${(rnd(90) + 10)}-${(rnd(90) + 10)}`;
+const genNumber = (c: Country) => {
+  const body = c.format
+    .replace(/#/g, () => String(rnd(10)))
+    .replace(/%/g, () => String(rnd(9) + 1));
+  return `${c.dial} ${body}`;
+};
 const genCode = () => String(rnd(900000) + 100000);
 
 const NAV = [
