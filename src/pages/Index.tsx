@@ -243,6 +243,42 @@ const Index = () => {
         </div>
       </section>
 
+      {/* Reviews */}
+      <section className="container py-20">
+        <div className="text-center mb-12">
+          <h2 className="font-display text-4xl font-bold mb-3">Отзывы покупателей</h2>
+          <p className="text-muted-foreground">Более 4 000 довольных клиентов по всей России</p>
+        </div>
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">
+          {[
+            { name: 'Алексей М.', avatar: '👨‍💻', stars: 5, date: '14 июня 2024', text: 'Купил номер Германии для регистрации на сервисе. Код пришёл мгновенно, всё сработало с первого раза. Отличный сервис, буду пользоваться постоянно!' },
+            { name: 'Дарья К.', avatar: '👩‍🎨', stars: 5, date: '9 июня 2024', text: 'Нужен был американский номер для Tinder — взяла здесь. Оплата прошла быстро, номер активировался за секунду. Однозначно рекомендую!' },
+            { name: 'Игорь В.', avatar: '🧔', stars: 5, date: '3 июня 2024', text: 'Пробовал разные сервисы — этот лучший. Удобный интерфейс, много стран, цена очень адекватная. Телеграм зарегистрировал без проблем.' },
+            { name: 'Мария Т.', avatar: '👩‍💼', stars: 5, date: '28 мая 2024', text: 'Нужен был польский номер для Steam. Всё пришло за 30 секунд. Сайт работает чётко, поддержка отвечает быстро. Спасибо!' },
+            { name: 'Руслан Ш.', avatar: '🧑‍🦱', stars: 5, date: '21 мая 2024', text: 'Пользуюсь уже третий месяц подряд. Закупаю номера оптом для работы. Ни разу не подвёл — коды доходят всегда и быстро.' },
+            { name: 'Анна Л.', avatar: '👩‍🦰', stars: 5, date: '15 мая 2024', text: 'Очень удобно выбирать по стране и оператору. Взяла британский номер для верификации Apple ID. Код пришёл мгновенно. 10 из 10!' },
+          ].map(({ name, avatar, stars, date, text }, i) => (
+            <div key={i} className="glass rounded-2xl p-6 flex flex-col gap-4 animate-fade-in" style={{ animationDelay: `${i * 0.07}s`, opacity: 0 }}>
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/30 to-accent/20 grid place-items-center text-xl">{avatar}</div>
+                  <div>
+                    <div className="font-semibold text-sm">{name}</div>
+                    <div className="text-xs text-muted-foreground">{date}</div>
+                  </div>
+                </div>
+                <div className="flex gap-0.5">
+                  {Array.from({ length: stars }).map((_, s) => (
+                    <span key={s} className="text-yellow-400 text-sm">★</span>
+                  ))}
+                </div>
+              </div>
+              <p className="text-sm text-muted-foreground leading-relaxed">{text}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
       {/* Contacts / Footer */}
       <footer id="contacts" className="container py-16 border-t border-white/10 mt-10">
         <div className="grid md:grid-cols-3 gap-8">
