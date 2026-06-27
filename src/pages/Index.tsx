@@ -3,6 +3,9 @@ import Icon from '@/components/ui/icon';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { useRobokassa, openPaymentPage, isValidEmail } from '@/components/extensions/robokassa/useRobokassa';
+
+const ROBOKASSA_URL = 'https://functions.poehali.dev/6c3e7752-c416-4fb3-8d42-1c6f4b8b8d3a';
 
 type Operator = { name: string; prefix: string; format: string };
 type Country = { code: string; name: string; flag: string; dial: string; operators: Operator[] };
@@ -323,12 +326,36 @@ const Index = () => {
   );
 };
 
-function PaymentDialog({ number, country, onClose, onPaid }: { number: string | null; country: Country | null; onClose: () => void; onPaid: (n: string) => void }) {
-  const [processing, setProcessing] = useState(false);
-  const pay = () => {
-    setProcessing(true);
-    setTimeout(() => { setProcessing(false); if (number) onPaid(number); }, 1600);
+function PaymentDialog({ number, country, onClose }: { number: string | null; country: Country | null; onClose: () => void; onPaid: (n: string) => void }) {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phone, setPhone] = useState('');
+  const [err, setErr] = useState('');
+
+  const { createPayment, isLoading } = useRobokassa({ apiUrl: ROBOKASSA_URL });
+
+  const pay = async () => {
+    if (!name.trim()) { setErr('Введите имя'); return; }
+    if (!isValidEmail(email)) { setErr('Введите корректный email'); return; }
+    if (!phone.trim()) { setErr('Введите телефон'); return; }
+    setErr('');
+    try {
+      const res = await createPayment({
+        amount: 100,
+        userName: name,
+        userEmail: email,
+        userPhone: phone,
+        cartItems: [{ id: number || 'num', name: `Номер ${number}`, price: 100, quantity: 1 }],
+        successUrl: window.location.href,
+        failUrl: window.location.href,
+      });
+      openPaymentPage(res.payment_url);
+      onClose();
+    } catch {
+      setErr('Ошибка создания платежа. Попробуйте ещё раз.');
+    }
   };
+
   return (
     <Dialog open={!!number} onOpenChange={(o) => !o && onClose()}>
       <DialogContent className="glass border-white/10 max-w-md">
@@ -344,18 +371,16 @@ function PaymentDialog({ number, country, onClose, onPaid }: { number: string | 
             <div className="font-bold text-xl">100 ₽</div>
           </div>
           <div className="space-y-3">
-            <Input placeholder="Номер карты" defaultValue="" inputMode="numeric" className="bg-input/50" />
-            <div className="grid grid-cols-2 gap-3">
-              <Input placeholder="ММ / ГГ" className="bg-input/50" />
-              <Input placeholder="CVC" inputMode="numeric" className="bg-input/50" />
-            </div>
-            <Input placeholder="Имя на карте" className="bg-input/50" />
+            <Input placeholder="Ваше имя" value={name} onChange={e => setName(e.target.value)} className="bg-input/50" />
+            <Input placeholder="Email для чека" value={email} onChange={e => setEmail(e.target.value)} type="email" className="bg-input/50" />
+            <Input placeholder="Телефон" value={phone} onChange={e => setPhone(e.target.value)} inputMode="tel" className="bg-input/50" />
           </div>
-          <Button onClick={pay} disabled={processing} className="w-full h-12 bg-gradient-to-r from-primary to-accent text-white border-0 hover:opacity-90 text-base">
-            {processing ? <><Icon name="Loader2" size={18} className="mr-2 animate-spin" /> Обработка…</> : <><Icon name="Lock" size={16} className="mr-2" /> Оплатить 100 ₽</>}
+          {err && <p className="text-sm text-red-400">{err}</p>}
+          <Button onClick={pay} disabled={isLoading} className="w-full h-12 bg-gradient-to-r from-primary to-accent text-white border-0 hover:opacity-90 text-base">
+            {isLoading ? <><Icon name="Loader2" size={18} className="mr-2 animate-spin" /> Создаём заказ…</> : <><Icon name="Lock" size={16} className="mr-2" /> Оплатить 100 ₽</>}
           </Button>
           <p className="text-xs text-center text-muted-foreground flex items-center justify-center gap-1">
-            <Icon name="ShieldCheck" size={13} /> Безопасная оплата · данные защищены
+            <Icon name="ShieldCheck" size={13} /> Оплата через Robokassa · все российские карты
           </p>
         </div>
       </DialogContent>
