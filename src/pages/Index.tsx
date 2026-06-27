@@ -4,32 +4,91 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
-type Country = { code: string; name: string; flag: string; dial: string; format: string };
+type Operator = { name: string; prefix: string; format: string };
+type Country = { code: string; name: string; flag: string; dial: string; operators: Operator[] };
 
-// Формат: # — случайная цифра, % — случайная цифра 1-9 (первая значимая)
 const COUNTRIES: Country[] = [
-  { code: 'ru', name: 'Россия', flag: '🇷🇺', dial: '+7', format: '(9##) ###-##-##' },
-  { code: 'us', name: 'США', flag: '🇺🇸', dial: '+1', format: '(%##) ###-####' },
-  { code: 'gb', name: 'Великобритания', flag: '🇬🇧', dial: '+44', format: '7### ######' },
-  { code: 'de', name: 'Германия', flag: '🇩🇪', dial: '+49', format: '15# ########' },
-  { code: 'fr', name: 'Франция', flag: '🇫🇷', dial: '+33', format: '6 ## ## ## ##' },
-  { code: 'ua', name: 'Украина', flag: '🇺🇦', dial: '+380', format: '## ### ## ##' },
-  { code: 'kz', name: 'Казахстан', flag: '🇰🇿', dial: '+7', format: '(7##) ###-##-##' },
-  { code: 'pl', name: 'Польша', flag: '🇵🇱', dial: '+48', format: '### ### ###' },
-  { code: 'es', name: 'Испания', flag: '🇪🇸', dial: '+34', format: '6## ## ## ##' },
-  { code: 'it', name: 'Италия', flag: '🇮🇹', dial: '+39', format: '3## ### ####' },
-  { code: 'tr', name: 'Турция', flag: '🇹🇷', dial: '+90', format: '(5##) ### ## ##' },
-  { code: 'in', name: 'Индия', flag: '🇮🇳', dial: '+91', format: '%#### #####' },
+  { code: 'ru', name: 'Россия', flag: '🇷🇺', dial: '+7', operators: [
+    { name: 'МТС',      prefix: '915', format: '(915) ###-##-##' },
+    { name: 'Билайн',   prefix: '903', format: '(903) ###-##-##' },
+    { name: 'МегаФон',  prefix: '926', format: '(926) ###-##-##' },
+    { name: 'Теле2',    prefix: '999', format: '(999) ###-##-##' },
+  ]},
+  { code: 'us', name: 'США', flag: '🇺🇸', dial: '+1', operators: [
+    { name: 'AT&T',     prefix: '312', format: '(312) ###-####' },
+    { name: 'Verizon',  prefix: '646', format: '(646) ###-####' },
+    { name: 'T-Mobile', prefix: '917', format: '(917) ###-####' },
+    { name: 'Sprint',   prefix: '773', format: '(773) ###-####' },
+  ]},
+  { code: 'gb', name: 'Великобритания', flag: '🇬🇧', dial: '+44', operators: [
+    { name: 'EE',       prefix: '7700', format: '7700 ######' },
+    { name: 'O2',       prefix: '7911', format: '7911 ######' },
+    { name: 'Vodafone', prefix: '7850', format: '7850 ######' },
+    { name: 'Three',    prefix: '7730', format: '7730 ######' },
+  ]},
+  { code: 'de', name: 'Германия', flag: '🇩🇪', dial: '+49', operators: [
+    { name: 'Deutsche Telekom', prefix: '151', format: '151 ########' },
+    { name: 'Vodafone DE',      prefix: '152', format: '152 ########' },
+    { name: 'O2 Germany',       prefix: '176', format: '176 ########' },
+    { name: 'Drillisch',        prefix: '159', format: '159 ########' },
+  ]},
+  { code: 'fr', name: 'Франция', flag: '🇫🇷', dial: '+33', operators: [
+    { name: 'Orange',   prefix: '6', format: '6 ## ## ## ##' },
+    { name: 'SFR',      prefix: '7', format: '7 ## ## ## ##' },
+    { name: 'Bouygues', prefix: '6', format: '6 ## ## ## ##' },
+    { name: 'Free',     prefix: '7', format: '7 ## ## ## ##' },
+  ]},
+  { code: 'ua', name: 'Україна', flag: '🇺🇦', dial: '+380', operators: [
+    { name: 'Kyivstar', prefix: '67', format: '67 ### ## ##' },
+    { name: 'Vodafone', prefix: '50', format: '50 ### ## ##' },
+    { name: 'lifecell', prefix: '63', format: '63 ### ## ##' },
+    { name: 'Укртелеком', prefix: '91', format: '91 ### ## ##' },
+  ]},
+  { code: 'kz', name: 'Казахстан', flag: '🇰🇿', dial: '+7', operators: [
+    { name: 'Kcell',    prefix: '701', format: '(701) ###-##-##' },
+    { name: 'Beeline KZ', prefix: '707', format: '(707) ###-##-##' },
+    { name: 'Tele2 KZ', prefix: '705', format: '(705) ###-##-##' },
+    { name: 'Altel',    prefix: '700', format: '(700) ###-##-##' },
+  ]},
+  { code: 'pl', name: 'Польша', flag: '🇵🇱', dial: '+48', operators: [
+    { name: 'Orange PL', prefix: '660', format: '660 ### ###' },
+    { name: 'Play',      prefix: '730', format: '730 ### ###' },
+    { name: 'T-Mobile PL', prefix: '502', format: '502 ### ###' },
+    { name: 'Plus',      prefix: '601', format: '601 ### ###' },
+  ]},
+  { code: 'es', name: 'Испания', flag: '🇪🇸', dial: '+34', operators: [
+    { name: 'Movistar', prefix: '606', format: '606 ## ## ##' },
+    { name: 'Vodafone ES', prefix: '616', format: '616 ## ## ##' },
+    { name: 'Orange ES', prefix: '626', format: '626 ## ## ##' },
+    { name: 'MásMóvil',  prefix: '636', format: '636 ## ## ##' },
+  ]},
+  { code: 'it', name: 'Италия', flag: '🇮🇹', dial: '+39', operators: [
+    { name: 'TIM',      prefix: '330', format: '330 ### ####' },
+    { name: 'Vodafone IT', prefix: '340', format: '340 ### ####' },
+    { name: 'Wind Tre', prefix: '320', format: '320 ### ####' },
+    { name: 'Iliad IT', prefix: '351', format: '351 ### ####' },
+  ]},
+  { code: 'tr', name: 'Турция', flag: '🇹🇷', dial: '+90', operators: [
+    { name: 'Turkcell', prefix: '532', format: '(532) ### ## ##' },
+    { name: 'Vodafone TR', prefix: '542', format: '(542) ### ## ##' },
+    { name: 'Türk Telekom', prefix: '552', format: '(552) ### ## ##' },
+    { name: 'Netgsm',   prefix: '505', format: '(505) ### ## ##' },
+  ]},
+  { code: 'in', name: 'Индия', flag: '🇮🇳', dial: '+91', operators: [
+    { name: 'Jio',      prefix: '70', format: '70### #####' },
+    { name: 'Airtel',   prefix: '98', format: '98### #####' },
+    { name: 'Vi',       prefix: '95', format: '95### #####' },
+    { name: 'BSNL',     prefix: '94', format: '94### #####' },
+  ]},
 ];
 
 const SITES = ['Telegram', 'WhatsApp', 'Google', 'Instagram', 'VK', 'TikTok', 'Discord', 'Avito', 'Steam', 'Apple ID', 'Microsoft', 'Tinder', 'Uber', 'Amazon', 'PayPal'];
 
 const rnd = (n: number) => Math.floor(Math.random() * n);
-const genNumber = (c: Country) => {
-  const body = c.format
-    .replace(/#/g, () => String(rnd(10)))
-    .replace(/%/g, () => String(rnd(9) + 1));
-  return `${c.dial} ${body}`;
+const genNumber = (c: Country): { num: string; operator: string } => {
+  const op = c.operators[rnd(c.operators.length)];
+  const num = op.format.replace(/#/g, () => String(rnd(10)));
+  return { num: `${c.dial} ${num}`, operator: op.name };
 };
 const genCode = () => String(rnd(900000) + 100000);
 
@@ -44,7 +103,7 @@ const NAV = [
 
 const Index = () => {
   const [selected, setSelected] = useState<Country | null>(null);
-  const [numbers, setNumbers] = useState<string[]>([]);
+  const [numbers, setNumbers] = useState<{ num: string; operator: string }[]>([]);
   const [payNumber, setPayNumber] = useState<string | null>(null);
   const [activeNumber, setActiveNumber] = useState<{ num: string; country: Country } | null>(null);
 
@@ -158,10 +217,10 @@ const Index = () => {
         </p>
         {selected && (
           <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-            {numbers.map((num, i) => (
+            {numbers.map(({ num, operator }, i) => (
               <div key={num + i} className="glass rounded-2xl p-6 flex flex-col gap-4 animate-scale-in" style={{ animationDelay: `${i * 0.05}s` }}>
                 <div className="flex items-center justify-between">
-                  <span className="text-2xl">{selected.flag}</span>
+                  <span className="text-xs glass px-2 py-1 rounded-full text-primary font-medium">{operator}</span>
                   <span className="text-xs glass px-2 py-1 rounded-full text-accent">Свободен</span>
                 </div>
                 <div className="font-display text-xl font-semibold tracking-wide">{num}</div>
